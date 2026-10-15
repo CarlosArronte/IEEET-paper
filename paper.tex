@@ -1,0 +1,694 @@
+% !TeX program = pdflatex
+% ======================================================================
+% DOCUMENTO MAESTRO: ARTICULO REGULAR PARA IEEE T-IV O IEEE TVT
+%
+% Guardar como master.tex en UTF-8 y compilar dos veces con pdfLaTeX.
+% Requiere IEEEtran y paquetes habituales de TeX Live/MiKTeX/Overleaf.
+% Bibliografía integrada: no requiere archivos .bib ni imágenes externas.
+%
+% BASE EDITORIAL Y TRAZABILIDAD
+% Consulta de normas y biblioteca: 15 de octubre de 2026.
+%
+% Fuentes oficiales:
+% T-IV:
+% https://ieee-itss.org/pub/t-iv/
+% TVT:
+% https://vtsociety.org/publication/ieee-transactions-vehicular-technology/guidelines-authors/instructions
+% Estructura general IEEE:
+% https://journals.ieeeauthorcenter.ieee.org/create-your-ieee-journal-article/create-the-text-of-your-article/structure-your-article/
+% Selector oficial de plantillas:
+% https://template-selector.ieee.org/
+%
+% Biblioteca Zotero consultada en modo lectura:
+% Colección «Articulo IEEET», clave TAW68QTE.
+%
+% Ejemplos recientes utilizados para orientar esta plantilla:
+% 1. Bae et al., T-IV, 2025:
+%    costes programados, aprendizaje de expertos y evaluación comparativa.
+%    Zotero: TB7VGR26. DOI: 10.1109/TIV.2024.3465598.
+% 2. Zheng et al., T-IV, 2026:
+%    estabilidad, adaptación del controlador y validación HIL.
+%    Zotero: JQZK5CRG. DOI: 10.1109/TIV.2024.3398129.
+% 3. Chen et al., TVT, 2026:
+%    modelos informados por física y validación en vehículo real.
+%    Zotero: ZZ2QE4FS. DOI: 10.1109/TVT.2025.3635878.
+% 4. Yang et al., TVT, 2025:
+%    control basado en datos, factibilidad recursiva y estabilidad.
+%    Zotero: VEDMJ92F. DOI: 10.1109/TVT.2025.3552933.
+% 5. Li et al., TVT, 2025:
+%    modelado híbrido y adelantamientos con diferentes condiciones.
+%    Zotero: XFFMBW52. DOI: 10.1109/TVT.2024.3453170.
+%
+% Se conserva el año del volumen registrado en Zotero; puede diferir
+% del año de publicación anticipada y del año incluido en el DOI.
+%
+% ALCANCE DE LA ESTRUCTURA
+% Las revistas no imponen una jerarquía universal de títulos y subtítulos.
+% Este índice es una propuesta editorial para control vehicular con
+% aprendizaje y MPC, basada en las normas IEEE y los resúmenes consultados.
+% No se verificaron los índices íntegros de los artículos: los encabezados
+% siguientes no se presentan como una transcripción literal de ellos.
+% Adaptar los títulos al problema y a las contribuciones reales.
+%
+% Los porcentajes y números de párrafos son recomendaciones editoriales,
+% no límites oficiales ni criterios particulares de revisores identificados.
+%
+% REQUISITOS DE PRESENTACION
+% T-IV: 10 páginas sugeridas para artículo regular; admite sobrelongitud.
+% TVT: máximo inicial de 14 páginas; revisado/final de 16 páginas,
+% incluidas referencias y biografías. Dos columnas y fuente mínima de 10 pt.
+% Ambas revistas mantienen visible la identidad de los autores.
+% Texto publicable en inglés; comentarios de orientación en español.
+% Mantener los márgenes y espaciados establecidos por IEEEtran.
+% ======================================================================
+
+\documentclass[10pt,journal]{IEEEtran}
+
+% -------------------------- CONFIGURACION -----------------------------
+
+\newif\ifTargetTIV
+\TargetTIVtrue
+% Cambiar a \TargetTIVfalse para IEEE Transactions on Vehicular Technology.
+
+\newif\ifIncludeTheory
+\IncludeTheorytrue
+% Desactivar si el artículo no contiene una contribución teórica propia.
+
+\newif\ifIncludeAppendix
+\IncludeAppendixfalse
+% Activar para demostraciones o derivaciones extensas.
+
+\newif\ifIncludeDeclarations
+\IncludeDeclarationsfalse
+% Activar cuando proceda incluir declaraciones dentro del manuscrito.
+% Completar también los formularios editoriales correspondientes.
+
+\newif\ifIncludeBiographies
+\IncludeBiographiestrue
+% Mantener las biografías para el artículo regular de T-IV.
+
+\ifTargetTIV
+  \newcommand{\TargetJournal}{IEEE Transactions on Intelligent Vehicles}
+\else
+  \newcommand{\TargetJournal}{IEEE Transactions on Vehicular Technology}
+\fi
+
+% ------------------------------ PAQUETES ------------------------------
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{bm}
+\interdisplaylinepenalty=2500
+
+\usepackage{graphicx}
+\usepackage{booktabs,array,tabularx}
+\usepackage{siunitx}
+\sisetup{detect-all}
+
+\usepackage{algorithmic}
+% El pseudocódigo puede presentarse dentro de figure, evitando introducir
+% un flotante algorithm con convenciones distintas de las de IEEE.
+
+\usepackage[numbers,sort&compress]{natbib}
+% Citas numéricas. No cargar simultáneamente cite ni biblatex.
+% Si se utiliza BibTeX externo con natbib, emplear IEEEtranN.
+
+\usepackage{url}
+\usepackage[hidelinks]{hyperref}
+
+\hypersetup{
+  pdftitle={Master Template for an IEEE Vehicular Control Article},
+  pdfsubject={\TargetJournal},
+  pdfauthor={Replace with the manuscript authors}
+}
+
+% No modificar el formato mediante geometry, titlesec o setspace.
+% Para subfiguras, si fueran necesarias:
+% \usepackage[caption=false,font=footnotesize]{subfig}
+
+% ---------------------------- HERRAMIENTAS ----------------------------
+
+\newcommand{\placeholder}[1]{\textit{[#1]}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\vect}[1]{\bm{#1}}
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+\newcommand{\argmin}{\operatorname*{arg\,min}}
+
+\newtheorem{assumption}{Assumption}
+\newtheorem{proposition}{Proposition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+
+\begin{document}
+
+% TITULO
+% Contenido: método, tarea vehicular y condición distintiva.
+% Tono/extensión: específico y conciso; unas 12--18 palabras orientativas.
+% Revisión: evitar reclamos de optimalidad o seguridad no demostrados.
+
+\title{[Method] for [Vehicle Control Task] Under [Operating Conditions]}
+
+% AUTORES
+% Nombres bajo el título; afiliaciones y correos en la primera nota.
+% Sustituir todos los marcadores. Añadir membresías IEEE solo si son ciertas.
+
+\author{First A. Author, Second B. Author, and Third C. Author%
+\thanks{First A. Author and Second B. Author are with [Department],
+[Institution], [City], [Country] (e-mail: [institutional addresses]).}%
+\thanks{Third C. Author is with [Department], [Institution], [City],
+[Country] (e-mail: [institutional address]).}%
+\thanks{Corresponding author: [Full name].
+This work was supported by [Funder] under Grant [Identifier].}}
+
+% Verificar la financiación; retirar o adaptar la oración si corresponde.
+% No inventar fechas de recepción/aceptación, DOI, volumen o copyright.
+
+\maketitle
+
+\begin{abstract}
+% CONTENIDO: problema concreto, brecha, mecanismo propuesto, evaluación,
+% resultados cuantitativos reales y alcance de la conclusión.
+% TONO/EXTENSION: un párrafo de 150--250 palabras. Distribución orientativa:
+% 2 frases de problema, 2--3 de método y 2 de evidencia y alcance.
+% REVISION: novedad reconocible, cifras contextualizadas y correspondencia
+% con los resultados. Evitar citas, abreviaturas y ecuaciones desplegadas.
+% Redactar al terminar el artículo. El marcador no es un resumen final.
+\placeholder{Write the problem, research gap, proposed mechanism,
+evaluation protocol, measured results, and supported conclusion here.}
+\end{abstract}
+
+\begin{IEEEkeywords}
+% CONTENIDO: términos que representen sistema, tarea y método.
+% TONO/EXTENSION: 3--5 términos específicos, preferiblemente alfabéticos.
+% REVISION: utilizar el tesauro IEEE cuando corresponda y evitar etiquetas
+% que no estén sustentadas por el contenido del artículo.
+Automated vehicles, learning-based control, model predictive control,
+trajectory tracking.
+\end{IEEEkeywords}
+
+% ======================================================================
+\section{Introduction}
+\label{sec:introduction}
+% CONTENIDO: motivación vehicular, literatura crítica, brecha y aportes.
+% TONO/EXTENSION: 6--9 párrafos y lista breve; aproximadamente 15% del cuerpo.
+% REVISION: pertinencia para la revista, diferencia frente al trabajo más
+% próximo y correspondencia entre cada contribución y su evidencia.
+
+\subsection{Background and Motivation}
+% CONTENIDO: tarea, dominio operativo y consecuencias de la limitación actual.
+% TONO/EXTENSION: 1--2 párrafos, de lo general a lo específico.
+% REVISION: problema medible. Para T-IV, destacar inteligencia y operación
+% automatizada; para TVT, precisar el avance tecnológico vehicular.
+\placeholder{Describe the vehicle task, operating conditions, practical
+consequences, and unresolved technical challenge.}
+
+\subsection{Related Work and Research Gap}
+% CONTENIDO: organizar la literatura por mecanismos y limitaciones.
+% TONO/EXTENSION: 3--4 párrafos de síntesis crítica; evitar una lista de autores.
+% REVISION: trabajos recientes y seminales, comparación con alternativas
+% cercanas y una brecha verificable que conduzca al objetivo del artículo.
+% Si amplía una publicación de congreso propia, citarla y explicar el avance.
+%
+% Las citas siguientes son anclas de Zotero. Conservar solo las pertinentes
+% después de leer los artículos completos y verificar las afirmaciones.
+
+\placeholder{Compare learning-based predictive models and hierarchical
+vehicle control approaches.}%
+\cite{liDataDrivenHierarchicalModel2025,chenExperimentalEvaluationTrajectory2026a}
+
+\placeholder{Contrast adaptive objectives, stability-aware control, and
+data-driven feasibility analyses; identify the exact remaining gap.}%
+\cite{baeLearningExpertLevelRacing2025,zhengAdaptiveModelPredictive2026,
+yangDataDrivenModelPredictive2025}
+
+\subsection{Main Contributions}
+% CONTENIDO: 2--3 aportes distintos: avance, diferencia y evidencia.
+% TONO/EXTENSION: una frase introductoria y viñetas de 2--3 líneas.
+% REVISION: separar novedad metodológica, propiedad analítica y validación.
+% La combinación de técnicas conocidas requiere una ventaja demostrable.
+\placeholder{State the research objective and list the verified contributions.}
+
+\begin{itemize}
+  \item \placeholder{Methodological advance and difference from the
+  closest prior method; identify the supporting section.}
+  \item \placeholder{Analytical or computational advance and its
+  assumptions; retain only if established in this study.}
+  \item \placeholder{Experimental evidence that resolves the research
+  question, including operating conditions and reproducibility.}
+\end{itemize}
+
+% ORGANIZACION: opcional; un párrafo de 2--3 frases, sin subtítulo propio.
+% Mantener las referencias automáticas al modificar la estructura.
+The remainder of this article presents the problem formulation in
+Section~\ref{sec:problem} and the proposed method in
+Section~\ref{sec:method}.
+\ifIncludeTheory
+Section~\ref{sec:theory} develops the theoretical analysis.
+\fi
+Sections~\ref{sec:setup} and~\ref{sec:results} describe the evaluation
+and discuss the results. Section~\ref{sec:conclusion} concludes the article.
+
+% ======================================================================
+\section{System Modeling and Problem Formulation}
+\label{sec:problem}
+% CONTENIDO: sistema, variables, hipótesis, incertidumbre y objetivo formal.
+% TONO/EXTENSION: aproximadamente 12% del cuerpo; exposición reproducible.
+% REVISION: dimensiones, unidades, información disponible y coherencia
+% entre simplificaciones del modelo y condiciones experimentales.
+
+\subsection{Vehicle Model and Notation}
+% CONTENIDO: estados, entradas, salidas, dinámica, muestreo y coordenadas.
+% TONO/EXTENSION: 2--3 párrafos y las ecuaciones indispensables.
+% REVISION: distinguir planta, predictor y estimador; identificar parámetros
+% medidos o identificados y definir cada variable antes de utilizarla.
+\placeholder{Define the vehicle dynamics, measurements, control inputs,
+coordinate frames, sampling period, and model parameters.}
+
+% ECUACION DE PRUEBA: descomentar y adaptar.
+% Definir x_k en R^n, u_k en R^m y w_k en R^n, con unidades por componente.
+% Explicar la discretización y el significado de las perturbaciones.
+%
+% \begin{equation}
+%   \vect{x}_{k+1}
+%   = f_{\theta}(\vect{x}_k,\vect{u}_k)+\vect{w}_k .
+%   \label{eq:dynamics}
+% \end{equation}
+%
+% La ecuación forma parte de una oración y necesita puntuación.
+% Referenciar mediante \eqref{eq:dynamics} después de activarla.
+
+\subsection{Operating Domain, Uncertainty, and Assumptions}
+% CONTENIDO: velocidades, fricción, carga, sensores, actuadores y entorno.
+% TONO/EXTENSION: 1--2 párrafos; enumerar solo supuestos utilizados después.
+% REVISION: ruido, retardos, saturación, variables observables y dominio
+% de validez. Justificar las cotas utilizadas con datos o referencias.
+\placeholder{Specify the operating domain, measurable quantities,
+disturbance model, actuator limits, and justified assumptions.}
+
+% \begin{assumption}\label{ass:disturbance}
+%   [State a precise, testable assumption and its domain of validity.]
+% \end{assumption}
+
+\subsection{Control Objectives and Constraints}
+% CONTENIDO: tarea, referencia, restricciones duras/blandas y criterios de fallo.
+% TONO/EXTENSION: 1--2 párrafos y formulación matemática compacta.
+% REVISION: objetivos en tensión, factibilidad y disponibilidad de referencia;
+% distinguir satisfacción de restricciones y garantías de seguridad.
+\placeholder{Formulate the control problem, tracking objectives,
+safety-related constraints, and admissible operating conditions.}
+
+% ======================================================================
+\section{Proposed Learning-Based Predictive Control Method}
+\label{sec:method}
+% CONTENIDO: explicar el mecanismo desde las mediciones hasta la acción.
+% TONO/EXTENSION: aproximadamente 25% del cuerpo; técnico y reproducible.
+% REVISION: novedad localizada, integración aprendizaje--control y detalle
+% suficiente para implementar el método sin consultar código privado.
+% Adaptar el título si el aporte real no utiliza aprendizaje o MPC.
+
+\subsection{Overall Architecture}
+% CONTENIDO: bloques, interfaces, flujo de información y escalas temporales.
+% TONO/EXTENSION: 1--2 párrafos y un diagrama de arquitectura.
+% REVISION: diferenciar entrenamiento, inferencia, optimización y planta;
+% señalar dónde se introduce la contribución.
+\placeholder{Describe the architecture, module interfaces, timing,
+and the location of the proposed technical contribution.}
+
+% FIGURA DE PRUEBA: descomentar el entorno completo.
+% El recuadro permite compilar sin un archivo gráfico externo.
+% Para una figura real, sustituir el recuadro por:
+% \includegraphics[width=\columnwidth]{figures/architecture.pdf}
+%
+% \begin{figure}[!t]
+%   \centering
+%   \fbox{\parbox[c][24mm][c]{0.90\columnwidth}{\centering
+%     Measurements $\rightarrow$ predictor $\rightarrow$ controller\\
+%     $\uparrow$\hspace{35mm}$\downarrow$\\
+%     Vehicle and environment}}
+%   \caption{Architecture of the proposed control system. Solid arrows
+%   denote online information flow; identify offline training separately.}
+%   \label{fig:architecture}
+% \end{figure}
+%
+% Pie debajo; label después de caption. Usar figure* para dos columnas.
+% Preferir gráficos vectoriales y tipografía legible al tamaño definitivo.
+% Citar la figura en el texto antes de analizar sus detalles.
+
+\subsection{Learning-Based Prediction Model}
+% CONTENIDO: qué se aprende y cómo se integra con el modelo nominal.
+% TONO/EXTENSION: 2--4 párrafos distribuidos entre los subapartados.
+% REVISION: causalidad temporal, cobertura de datos y tratamiento del error.
+\placeholder{Define the learned quantity and its interface with the
+nominal dynamics and the predictive controller.}
+
+\subsubsection{Offline Identification and Training}
+% CONTENIDO: entradas/salidas, arquitectura, pérdida, regularización,
+% normalización, optimizador y selección de hiperparámetros.
+% TONO/EXTENSION: 1--2 párrafos y una ecuación si aclara el aporte.
+% REVISION: particiones por trayectorias, vehículos o sesiones; prevenir
+% fuga temporal y selección de hiperparámetros con datos de prueba.
+\placeholder{Specify identification data, training procedure,
+hyperparameters, and the validation-only selection protocol.}
+
+\subsubsection{Online Inference and Uncertainty Handling}
+% CONTENIDO: ventana histórica, incertidumbre, actualización y latencia.
+% TONO/EXTENSION: 1--2 párrafos; precisar si el modelo permanece congelado.
+% REVISION: información disponible durante la ejecución y comportamiento
+% fuera de distribución; distinguir inferencia de aprendizaje en línea.
+\placeholder{Describe online inputs, uncertainty treatment,
+and any adaptation mechanism or frozen-model assumption.}
+
+\subsection{Predictive Control Formulation}
+% CONTENIDO: optimización completa, horizonte y política de aplicación.
+% TONO/EXTENSION: 2--3 párrafos, ecuaciones alineadas y símbolos definidos.
+% REVISION: coherencia entre predictor, coste, restricciones y solver.
+\placeholder{Present the complete finite-horizon optimization problem
+and explain the receding-horizon implementation.}
+
+\subsubsection{Objective Function}
+% CONTENIDO: seguimiento, esfuerzo, término terminal y objetivos adicionales
+% pertinentes, como confort o energía; definir pesos y escalas.
+% TONO/EXTENSION: un párrafo y una ecuación compacta.
+% REVISION: justificar la sintonía sin optimizar sobre el conjunto de prueba.
+\placeholder{Define the stage and terminal costs and justify their weights.}
+
+\subsubsection{Constraints and Feasibility Management}
+% CONTENIDO: límites físicos, restricciones vehiculares, holguras y terminal.
+% TONO/EXTENSION: 1--2 párrafos y restricciones explícitas.
+% REVISION: viabilidad inicial, penalización de holguras e infactibilidad;
+% evitar presentar restricciones blandas como garantías duras.
+\placeholder{Define admissible states and inputs, slack penalties,
+terminal ingredients, and the infeasibility handling policy.}
+
+\subsection{Implementation and Computational Complexity}
+% CONTENIDO: solver, tolerancias, inicialización, parada y acción de respaldo.
+% TONO/EXTENSION: 1--2 párrafos y pseudocódigo si elimina ambigüedades.
+% REVISION: tamaño del problema y coste por paso; diferenciar complejidad
+% asintótica y tiempos medidos en una plataforma concreta.
+\placeholder{Provide a reproducible execution procedure, solver settings,
+computational scaling, and timeout handling.}
+
+% PSEUDOCODIGO OPCIONAL:
+%
+% \begin{figure}[!t]
+%   \begin{algorithmic}[1]
+%     \REQUIRE Measurement, reference, model, and previous solution
+%     \STATE Update the state estimate and predictive model
+%     \STATE Construct and solve the constrained control problem
+%     \IF{the solution satisfies feasibility and timing requirements}
+%       \STATE Apply the first optimized control input
+%     \ELSE
+%       \STATE Apply the validated fallback action
+%     \ENDIF
+%   \end{algorithmic}
+%   \caption{Online control procedure.}
+%   \label{fig:procedure}
+% \end{figure}
+
+% ======================================================================
+\ifIncludeTheory
+\section{Theoretical Analysis}
+\label{sec:theory}
+% CONTENIDO: propiedades demostrables del método propuesto.
+% TONO/EXTENSION: aproximadamente 8% del cuerpo; precisión matemática.
+% REVISION: supuestos explícitos y conexión con la implementación real.
+% Sección condicional: no es una exigencia universal de T-IV o TVT.
+% Si se elimina, reasignar el espacio al método o a la evaluación.
+
+\subsection{Recursive Feasibility and Constraint Satisfaction}
+% CONTENIDO: condiciones iniciales, conjunto terminal y tratamiento del error.
+% TONO/EXTENSION: 1--2 párrafos, proposición y demostración.
+% REVISION: construcción de solución candidata y alcance determinista
+% o probabilístico. Ensayos sin fallos no prueban factibilidad recursiva.
+\placeholder{State and prove the applicable feasibility property,
+including all assumptions and its relationship to implementation.}
+
+\subsection{Closed-Loop Stability or Error Bounds}
+% CONTENIDO: estabilidad, cota de error o probabilidad de violación.
+% TONO/EXTENSION: 1--2 párrafos, resultado y demostración o remisión al apéndice.
+% REVISION: efecto del error de aproximación y perturbaciones; distinguir
+% convergencia del entrenamiento y estabilidad del sistema controlado.
+% Renombrar este subtítulo según la propiedad realmente establecida.
+\placeholder{Establish the claimed closed-loop property and explain
+the assumptions under which it holds.}
+
+% \begin{theorem}\label{thm:closed-loop}
+%   [Insert a precise statement supported by the actual analysis.]
+% \end{theorem}
+%
+% \begin{IEEEproof}
+%   [Give the proof or refer to a complete derivation in the appendix.]
+% \end{IEEEproof}
+\fi
+
+% ======================================================================
+\section{Experimental Setup}
+\label{sec:setup}
+% CONTENIDO: protocolo definido antes de observar los resultados principales.
+% TONO/EXTENSION: aproximadamente 10% del cuerpo; factual y reproducible.
+% REVISION: comparación justa, cobertura del dominio y detalle de plataforma.
+
+\subsection{Platforms and Operating Scenarios}
+% CONTENIDO: simulador/vehículo, sensores, hardware, software, muestreo,
+% trayectorias, velocidades, fricción, carga y perturbaciones evaluadas.
+% TONO/EXTENSION: 1--2 párrafos y tabla de parámetros cuando sea útil.
+% REVISION: distinguir simulación, HIL y vehículo real; definir criterios
+% de fallo y no atribuir a una modalidad evidencia obtenida en otra.
+\placeholder{Describe the platforms, scenario matrix, parameter ranges,
+execution hardware, and experimental termination criteria.}
+
+\subsection{Data Protocol and Baseline Methods}
+% CONTENIDO: procedencia y particiones de datos, ensayos y comparadores;
+% incluir una referencia convencional fuerte y alternativas recientes.
+% TONO/EXTENSION: 2 párrafos y configuración explícita o tabla compacta.
+% REVISION: mismos datos, restricciones e información; presupuesto de
+% sintonía equitativo y documentación de código, versiones y modificaciones.
+\placeholder{Specify independent data partitions, trial counts, random
+seeds, baseline implementations, and fair tuning conditions.}
+
+\subsection{Evaluation Metrics and Statistical Protocol}
+% CONTENIDO: métricas de tarea, restricciones, confort/energía si proceden,
+% tiempos, fallos, unidad de réplica e incertidumbre de estimación.
+% TONO/EXTENSION: 1--2 párrafos; definir las métricas no estándar.
+% REVISION: tamaños de efecto y dispersión. No tratar muestras temporales
+% correladas como ensayos independientes; justificar tamaño muestral y
+% pruebas estadísticas cuando se utilicen.
+\placeholder{Define primary and secondary metrics, aggregation rules,
+independent repetitions, confidence intervals, and failure reporting.}
+
+% TABLA PROFESIONAL DE PRUEBA:
+% Descomentar el entorno completo y sustituir -- por resultados medidos.
+% Definir si se reporta media/desviación o mediana/rango intercuartil.
+%
+% \begin{table}[!t]
+%   \caption{Closed-loop performance under the same evaluation protocol}
+%   \label{tab:comparison}
+%   \centering
+%   \footnotesize
+%   \begin{tabular}{@{}lccc@{}}
+%     \toprule
+%     Method & RMSE (\si{\metre}) & Time (\si{\milli\second})
+%            & Failures (\%) \\
+%     \midrule
+%     Conventional MPC & -- & -- & -- \\
+%     Recent baseline  & -- & -- & -- \\
+%     Proposed method  & -- & -- & -- \\
+%     \bottomrule
+%   \end{tabular}
+%   \par\smallskip
+%   \parbox{\columnwidth}{\footnotesize
+%     Report the number of independent runs and the uncertainty summary.
+%     Define failure and whether smaller values are preferable.}
+% \end{table}
+%
+% Título encima; evitar líneas verticales y reducción ilegible de fuente.
+% No sugerir superioridad estadística con negritas sin análisis suficiente.
+
+% ======================================================================
+\section{Results and Discussion}
+\label{sec:results}
+% CONTENIDO: responder las preguntas de investigación y explicar mecanismos.
+% TONO/EXTENSION: aproximadamente 25% del cuerpo; evidencia e interpretación.
+% REVISION: comparaciones sólidas, casos adversos y alcance de las conclusiones.
+% Separar Discussion como sección propia si la extensión lo justifica.
+
+\subsection{Prediction Accuracy and Model Validation}
+% CONTENIDO: error fuera de muestra, horizontes y regímenes relevantes.
+% TONO/EXTENSION: 1--2 párrafos y una figura/tabla si hay aporte de modelado.
+% REVISION: comparar con el modelo nominal y un predictor alternativo fuerte;
+% comprobar si una mejor predicción produce una mejora de control.
+\placeholder{Report held-out prediction performance and relate modeling
+errors to the downstream control task.}
+
+\subsection{Closed-Loop Performance and Constraint Satisfaction}
+% CONTENIDO: métricas principales, restricciones, fallos y condiciones difíciles.
+% TONO/EXTENSION: 2--3 párrafos, tabla agregada y trayectorias representativas.
+% REVISION: magnitud y variabilidad de las mejoras, costes asociados y
+% resultados desfavorables; evitar seleccionar únicamente casos favorables.
+\placeholder{Compare the methods across the full scenario matrix,
+including performance, constraint violations, and unsuccessful trials.}
+
+\subsection{Ablation and Sensitivity Analysis}
+% CONTENIDO: retirar mecanismos nuevos y variar hiperparámetros críticos.
+% TONO/EXTENSION: 1--2 párrafos y tabla/gráfica centrada en aislar efectos.
+% REVISION: contribución individual de cada componente y control de recursos;
+% no confundir un mejor algoritmo con un mayor presupuesto computacional.
+\placeholder{Isolate the contributions of the proposed components and
+report sensitivity to the parameters that affect deployment.}
+
+\subsection{Real-Time Performance and Experimental Validation}
+% CONTENIDO: latencia completa, hardware, distribución de tiempos,
+% retrasos, timeouts y respaldo; pruebas HIL o reales si están disponibles.
+% TONO/EXTENSION: 1--2 párrafos con condiciones y medidas completas.
+% REVISION: media, percentiles altos y máximo observado frente al muestreo;
+% diferenciar un máximo observado y una cota demostrada de peor caso.
+\placeholder{Report implementation timing, missed deadlines, and the
+available hardware-in-the-loop or real-vehicle validation.}
+
+\subsection{Limitations and Generalization}
+% CONTENIDO: fallos, supuestos restrictivos y transferencia a otros vehículos,
+% carreteras, sensores o dominios operativos.
+% TONO/EXTENSION: 1--2 párrafos analíticos y específicos.
+% REVISION: conclusiones proporcionales a la evidencia; distinguir resultados
+% comprobados, hipótesis de transferencia y cuestiones todavía abiertas.
+\placeholder{Discuss the observed limitations, unresolved failure modes,
+generalization evidence, and practical deployment implications.}
+
+% ======================================================================
+\section{Conclusion}
+\label{sec:conclusion}
+% CONTENIDO: problema abordado, mecanismo distintivo, hallazgo principal
+% cuantificado y siguiente paso derivado de una limitación concreta.
+% TONO/EXTENSION: 1--2 párrafos; aproximadamente 5% del cuerpo.
+% REVISION: responder a los aportes iniciales sin incorporar experimentos,
+% cifras o afirmaciones nuevas ni ampliar injustificadamente el alcance.
+\placeholder{Summarize the verified contribution, the most informative
+measured findings, the supported scope, and a concrete next research step.}
+
+% ======================================================================
+\ifIncludeAppendix
+\appendices
+
+\section{Additional Derivations}
+\label{app:proofs}
+% CONTENIDO: pasos técnicos extensos necesarios para verificar los resultados.
+% TONO/EXTENSION: lo indispensable; cuenta en la extensión del manuscrito.
+% REVISION: pruebas completas y trazables; mantener en el cuerpo los supuestos
+% y resultados principales.
+\placeholder{Provide the complete supporting derivations referenced
+from the main text.}
+\fi
+
+% ======================================================================
+\section*{Acknowledgment}
+% CONTENIDO: asistencia y apoyos verificables; financiación en la primera
+% nota de autor según el formato IEEE, evitando duplicaciones innecesarias.
+% TONO/EXTENSION: 2--4 frases; nombres y reconocimientos confirmados.
+% REVISION: exactitud de los apoyos y declaraciones editoriales aplicables.
+% TVT solicita reconocer el uso de IA para modificar texto de los autores
+% cuando se haya utilizado; describir herramienta y alcance reales.
+% Esta plantilla contiene estructura y marcadores, no resultados científicos.
+\placeholder{Insert verified acknowledgments and any applicable disclosure.}
+
+\ifIncludeDeclarations
+\section*{Conflict of Interest}
+% CONTENIDO: declaración verificada por todos los autores.
+% TONO/EXTENSION: 1--2 frases; no afirmar ausencia de conflictos por defecto.
+% REVISION: consistencia con los formularios editoriales. T-IV solicita
+% declarar COI en su checklist; no implica exigir este encabezado impreso.
+\placeholder{Insert the authors' verified competing-interest statement.}
+
+\section*{Data and Code Availability}
+% CONTENIDO: repositorio real, versión, licencia y restricciones de acceso.
+% TONO/EXTENSION: 1--3 frases, con enlace persistente cuando exista.
+% REVISION: correspondencia entre artefactos y resultados, y posibilidad de
+% reproducirlos. No es una sección obligatoria universal de ambas revistas.
+\placeholder{State the actual availability of data, code, configurations,
+and instructions, including any access restrictions.}
+\fi
+
+% ======================================================================
+% REFERENCIAS
+% Orden numérico por primera aparición y formato IEEE.
+% Entradas procedentes de Zotero; revisar pertinencia antes del envío.
+% Las claves de cite corresponden a citationKey, no al identificador
+% de ocho caracteres del ítem Zotero.
+%
+% Para migrar a una bibliografía externa exportada desde Zotero:
+% 1. Eliminar el entorno thebibliography completo.
+% 2. Incorporar:
+%    \bibliographystyle{IEEEtranN}
+%    \bibliography{references}
+% 3. Compilar: pdfLaTeX, BibTeX, pdfLaTeX, pdfLaTeX.
+
+\begin{thebibliography}{00}
+
+\bibitem{liDataDrivenHierarchicalModel2025}
+Y.~Li, Z.~Chen, T.~Wang, X.~Zeng, and Z.~Yin,
+``Data-driven hierarchical model predictive control for automated
+overtaking maneuver via Gaussian process regression,''
+\emph{IEEE Trans. Veh. Technol.}, vol.~74, no.~1,
+pp.~263--278, Jan. 2025, doi:
+\href{https://doi.org/10.1109/TVT.2024.3453170}{10.1109/TVT.2024.3453170}.
+
+\bibitem{chenExperimentalEvaluationTrajectory2026a}
+G.~Chen, X.~Zhao, Z.~Gao, Z.~Gao, X.~Wang, and M.~Hua,
+``Experimental evaluation of trajectory tracking with nonlinear model
+predictive control enhanced by physics-informed neural network,''
+\emph{IEEE Trans. Veh. Technol.}, vol.~75, no.~6,
+pp.~8928--8939, Jun. 2026, doi:
+\href{https://doi.org/10.1109/TVT.2025.3635878}{10.1109/TVT.2025.3635878}.
+
+\bibitem{baeLearningExpertLevelRacing2025}
+J.~Bae, J.~Lim, B.~Suh, J.~Lee, K.~Ryu, J.~Kim, and J.~Choi,
+``Learning expert-level racing strategies via scheduled cost functions
+in model predictive control,''
+\emph{IEEE Trans. Intell. Veh.}, vol.~10, no.~6,
+pp.~3827--3840, Jun. 2025, doi:
+\href{https://doi.org/10.1109/TIV.2024.3465598}{10.1109/TIV.2024.3465598}.
+
+\bibitem{zhengAdaptiveModelPredictive2026}
+Z.~Zheng, S.~Wang, X.~Zhao, Q.~Yu, H.~Zhang, Y.~Lv, and J.~Tian,
+``Adaptive model predictive control of four-wheel drive intelligent
+electric vehicles based on stability probability under extreme
+braking conditions,''
+\emph{IEEE Trans. Intell. Veh.}, vol.~11, no.~5,
+pp.~618--628, May 2026, doi:
+\href{https://doi.org/10.1109/TIV.2024.3398129}{10.1109/TIV.2024.3398129}.
+
+\bibitem{yangDataDrivenModelPredictive2025}
+H.~Yang, Y.~He, C.~Mu, and P.~Li,
+``Data-driven model predictive longitudinal control for autonomous
+vehicles with unknown chassis,''
+\emph{IEEE Trans. Veh. Technol.}, vol.~74, no.~8,
+pp.~11732--11742, Aug. 2025, doi:
+\href{https://doi.org/10.1109/TVT.2025.3552933}{10.1109/TVT.2025.3552933}.
+
+\end{thebibliography}
+
+% ======================================================================
+\ifIncludeBiographies
+% BIOGRAFIAS
+% CONTENIDO: formación, puesto actual e intereses reales de cada autor.
+% TONO/EXTENSION: un párrafo breve; unas 60--100 palabras orientativas.
+% REVISION: coherencia con afiliaciones y autoría. T-IV pide biografías
+% breves; incorporar fotografías reales cuando proceda en el paquete final.
+
+\begin{IEEEbiographynophoto}{First A. Author}
+\placeholder{Insert verified education, current position, and research
+interests. Repeat for every author.}
+\end{IEEEbiographynophoto}
+
+\begin{IEEEbiographynophoto}{Second B. Author}
+\placeholder{Insert this author's verified biography.}
+\end{IEEEbiographynophoto}
+
+\begin{IEEEbiographynophoto}{Third C. Author}
+\placeholder{Insert this author's verified biography.}
+\end{IEEEbiographynophoto}
+\fi
+
+\end{document}
