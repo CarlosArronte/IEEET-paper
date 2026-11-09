@@ -71,7 +71,7 @@
 % Cambiar a \TargetTIVfalse para IEEE Transactions on Vehicular Technology.
 
 \newif\ifIncludeTheory
-\IncludeTheorytrue
+\IncludeTheoryfalse
 % Desactivar si el artículo no contiene una contribución teórica propia.
 
 \newif\ifIncludeAppendix
@@ -84,7 +84,7 @@
 % Completar también los formularios editoriales correspondientes.
 
 \newif\ifIncludeBiographies
-\IncludeBiographiestrue
+\IncludeBiographiesfalse
 % Mantener las biografías para el artículo regular de T-IV.
 
 \ifTargetTIV
@@ -105,10 +105,9 @@
 
 \usepackage{graphicx}
 \usepackage{booktabs,array,tabularx}
-\usepackage{siunitx}
-\sisetup{detect-all}
+% siunitx no es necesario para las unidades escritas explicitamente en este borrador.
 
-\usepackage{algorithmic}
+% \usepackage{algorithmic} % Activar solo si se incorpora pseudocodigo.
 % El pseudocódigo puede presentarse dentro de figure, evitando introducir
 % un flotante algorithm con convenciones distintas de las de IEEE.
 
@@ -120,9 +119,9 @@
 \usepackage[hidelinks]{hyperref}
 
 \hypersetup{
-  pdftitle={Master Template for an IEEE Vehicular Control Article},
+  pdftitle={Residual Model Validity in Learning-Based Vehicle Predictive Control},
   pdfsubject={\TargetJournal},
-  pdfauthor={Replace with the manuscript authors}
+  pdfauthor={Carlos Alberto Arronte Delgado; coauthors pending}
 }
 
 % No modificar el formato mediante geometry, titlesec o setspace.
@@ -132,6 +131,7 @@
 % ---------------------------- HERRAMIENTAS ----------------------------
 
 \newcommand{\placeholder}[1]{\textit{[#1]}}
+\newcommand{\pending}[1]{\par\smallskip\noindent\textbf{[Pending:} #1\textbf{]}\par\smallskip}
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\vect}[1]{\bm{#1}}
 \newcommand{\norm}[1]{\left\lVert#1\right\rVert}
@@ -142,6 +142,16 @@
 \newtheorem{theorem}{Theorem}
 \newtheorem{lemma}{Lemma}
 
+% ACTUALIZACION CIENTIFICA: 9 de noviembre de 2026.
+% Fuentes internas: historial Carlos Doctorado recuperado en esta revision;
+% Continuidad_implementacion_Carlos_Doctorado_2026-10-01.md (secciones 2--9);
+% Plan_experimental_quali_Carlos_Arronte.md (14-10-2026), como PROPUESTA.
+% No se reejecutaron simulaciones ni se inspeccionaron modelos MATLAB.
+% Las cifras incluidas son preliminares, recuperadas de la ficha de continuidad.
+% Separar las particiones originales de modelos de posteriores planes de extraccion.
+% Los marcadores Pending son notas editoriales: resolverlos antes de enviar.
+% La teoria permanece desactivada: no hay prueba recuperada de estabilidad.
+% La supervision se formula como interfaz candidata, no como metodo ya validado.
 \begin{document}
 
 % TITULO
@@ -149,19 +159,17 @@
 % Tono/extensión: específico y conciso; unas 12--18 palabras orientativas.
 % Revisión: evitar reclamos de optimalidad o seguridad no demostrados.
 
-\title{[Method] for [Vehicle Control Task] Under [Operating Conditions]}
+\title{Residual Model Validity for Learning-Based Predictive Lateral Vehicle Control Under Operating-Condition Changes}
 
 % AUTORES
 % Nombres bajo el título; afiliaciones y correos en la primera nota.
 % Sustituir todos los marcadores. Añadir membresías IEEE solo si son ciertas.
 
-\author{First A. Author, Second B. Author, and Third C. Author%
-\thanks{First A. Author and Second B. Author are with [Department],
-[Institution], [City], [Country] (e-mail: [institutional addresses]).}%
-\thanks{Third C. Author is with [Department], [Institution], [City],
-[Country] (e-mail: [institutional address]).}%
-\thanks{Corresponding author: [Full name].
-This work was supported by [Funder] under Grant [Identifier].}}
+\author{Carlos Alberto Arronte Delgado and [Coauthors to be confirmed]%
+\thanks{Carlos Alberto Arronte Delgado is with the Escola Polit\'ecnica,
+Universidade de S\~ao Paulo, S\~ao Paulo, Brazil.
+Author order, coauthor affiliations, e-mail addresses, corresponding author,
+and funding identifiers remain to be completed.}}
 
 % Verificar la financiación; retirar o adaptar la oración si corresponde.
 % No inventar fechas de recepción/aceptación, DOI, volumen o copyright.
@@ -176,8 +184,7 @@ This work was supported by [Funder] under Grant [Identifier].}}
 % REVISION: novedad reconocible, cifras contextualizadas y correspondencia
 % con los resultados. Evitar citas, abreviaturas y ecuaciones desplegadas.
 % Redactar al terminar el artículo. El marcador no es un resumen final.
-\placeholder{Write the problem, research gap, proposed mechanism,
-evaluation protocol, measured results, and supported conclusion here.}
+Learned residual dynamics can improve the predictions of a reduced vehicle model, but their usefulness for feedback control depends on the operating condition and on how the correction propagates through the prediction horizon. This article investigates this distinction for lateral trajectory tracking using a physical bicycle model augmented with learned corrections to lateral velocity and yaw rate. The experimental framework combines CarSim with an incremental model predictive controller operating at 50 Hz over a 0.6 s horizon. Deterministic neural, Gaussian-process, and heteroscedastic ensemble residual models provide complementary instruments for studying prediction accuracy, uncertainty, and training-domain coverage. Preliminary closed-loop records illustrate condition-dependent behavior: a neural residual reduces lateral tracking root-mean-square error from 0.2342 to 0.1908 m in a nominal tight double lane change, while increasing it from 0.0765 to 0.9173 m in a double lane change at 50 km/h. These observations motivate a causal interface for estimating residual validity and informing its use in the controller. The proposed evaluation separates prediction error, residual benefit, operational violations, and optimization success, and reserves independent conditions for assessing incremental information from uncertainty and out-of-distribution indicators. The current evidence supports investigating conditional residual use; the effectiveness of the supervisory intervention remains to be established.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -202,8 +209,9 @@ trajectory tracking.
 % TONO/EXTENSION: 1--2 párrafos, de lo general a lo específico.
 % REVISION: problema medible. Para T-IV, destacar inteligencia y operación
 % automatizada; para TVT, precisar el avance tecnológico vehicular.
-\placeholder{Describe the vehicle task, operating conditions, practical
-consequences, and unresolved technical challenge.}
+Lateral trajectory tracking requires a controller to translate a geometric reference into feasible steering commands despite discrepancies between its prediction model and vehicle dynamics. A reduced bicycle model offers a compact representation for constrained optimization, but changes in speed, tire--road interaction, and vehicle configuration alter the relationship between steering, lateral velocity, and yaw rate. Model predictive control (MPC) makes these discrepancies relevant over an entire sequence of future decisions rather than only at the next sample.
+
+A learned residual can compensate for systematic one-step prediction errors while preserving the physical model as a nominal structure. Its benefit, however, depends on the data supporting the correction and on the states and inputs visited by the controller. A small error on recorded transitions does not establish that the same correction improves a recursively propagated prediction or the resulting feedback trajectory. This study therefore asks when information generated by a learned dynamics model is useful for deciding how that model should influence lateral vehicle control.
 
 \subsection{Related Work and Research Gap}
 % CONTENIDO: organizar la literatura por mecanismos y limitaciones.
@@ -215,29 +223,25 @@ consequences, and unresolved technical challenge.}
 % Las citas siguientes son anclas de Zotero. Conservar solo las pertinentes
 % después de leer los artículos completos y verificar las afirmaciones.
 
-\placeholder{Compare learning-based predictive models and hierarchical
-vehicle control approaches.}%
-\cite{liDataDrivenHierarchicalModel2025,chenExperimentalEvaluationTrajectory2026a}
+Learning-based MPC includes approaches that improve the prediction model, learn controller parameters, or combine learning with constraint-handling mechanisms\cite{hewingReview2020}. Additive Gaussian-process models are particularly relevant here: Hewing et al.\ integrate nominal dynamics and a learned nonlinear component, propagating approximate uncertainty into a chance-constrained controller\cite{hewingCautious2019}. That construction illustrates why the uncertainty model and its treatment inside the optimization must be specified together. An uncertainty output alone does not provide the same guarantees.
 
-\placeholder{Contrast adaptive objectives, stability-aware control, and
-data-driven feasibility analyses; identify the exact remaining gap.}%
-\cite{baeLearningExpertLevelRacing2025,zhengAdaptiveModelPredictive2026,
-yangDataDrivenModelPredictive2025}
+Vehicle-specific work also combines physical structure and learning. Chen et al.\ study a physics-informed dynamics model and a horizon design for nonlinear predictive trajectory tracking, including real-vehicle experiments\cite{chenExperimentalEvaluationTrajectory2026a}. The present study instead retains a fixed nominal lateral model to examine the conditional usefulness of an additive residual and the information needed to supervise it.
+
+Deep ensembles offer a practical means of estimating predictive uncertainty from multiple networks\cite{lakshminarayanan2017}. In a residual dynamics application, disagreement between predicted means and the predicted conditional variance provide different signals. Neither is identical to distance from the training set, and neither directly measures the future tracking loss of a controller. These quantities must be tested against a defined target rather than used interchangeably as confidence.
+
+The research question addressed here is whether uncertainty, training-domain coverage, and previously observed discrepancies provide incremental information about residual usefulness and impending control degradation. The relevant distinction is between an unfamiliar query, an inaccurate prediction, a correction worse than the physical model, and a closed-loop operational violation. The study does not assume that these events coincide. Establishing novelty relative to the closest recent methods requires a complete, focused literature comparison; the current review identifies the methodological setting rather than claiming that residual supervision is absent from the literature.
 
 \subsection{Main Contributions}
 % CONTENIDO: 2--3 aportes distintos: avance, diferencia y evidencia.
 % TONO/EXTENSION: una frase introductoria y viñetas de 2--3 líneas.
 % REVISION: separar novedad metodológica, propiedad analítica y validación.
 % La combinación de técnicas conocidas requiere una ventaja demostrable.
-\placeholder{State the research objective and list the verified contributions.}
+The objective is to characterize the validity of learned residual dynamics for lateral MPC and to evaluate whether that information supports a beneficial supervisory intervention. The manuscript is organized around three contributions under investigation:
 
 \begin{itemize}
-  \item \placeholder{Methodological advance and difference from the
-  closest prior method; identify the supporting section.}
-  \item \placeholder{Analytical or computational advance and its
-  assumptions; retain only if established in this study.}
-  \item \placeholder{Experimental evidence that resolves the research
-  question, including operating conditions and reproducibility.}
+  \item A common physical--residual interface that separates one-step accuracy, recursively propagated prediction, and closed-loop utility across deterministic and probabilistic models (Sections~\ref{sec:problem} and~\ref{sec:method}).
+  \item A causal validity-assessment formulation using uncertainty, training-support indicators, and past innovation, with explicit ablations against state and reference information. The supervisory rule and its final validation remain pending (Section~\ref{sec:validity}).
+  \item A simulation protocol that tests whether prediction improvements transfer to tracking performance under operating-condition changes. Available B0/B1 records provide preliminary evidence of mixed control effects; confirmatory supervision results are still required (Sections~\ref{sec:setup} and~\ref{sec:results}).
 \end{itemize}
 
 % ORGANIZACION: opcional; un párrafo de 2--3 frases, sin subtítulo propio.
@@ -264,8 +268,29 @@ and discuss the results. Section~\ref{sec:conclusion} concludes the article.
 % TONO/EXTENSION: 2--3 párrafos y las ecuaciones indispensables.
 % REVISION: distinguir planta, predictor y estimador; identificar parámetros
 % medidos o identificados y definir cada variable antes de utilizarla.
-\placeholder{Define the vehicle dynamics, measurements, control inputs,
-coordinate frames, sampling period, and model parameters.}
+The plant is the CarSim vehicle model coupled to MATLAB/Simulink. The controller uses the path-relative state
+\begin{equation}
+ x=[e_y,e_\psi,v_y,r]^\top,\qquad
+ x_a=[x^\top,\delta_{k-1}]^\top,
+\end{equation}
+where $e_y$ is lateral displacement error (m), $e_\psi$ is heading error (rad), $v_y$ is lateral velocity (m/s), $r$ is yaw rate (rad/s), and $\delta$ is effective front-wheel steering angle (rad). The manipulated variable is $\Delta\delta_k=\delta_k-\delta_{k-1}$. Longitudinal speed control is separate from lateral control.
+
+For explicit notation, consider positive lateral velocity and steering to the left, positive counterclockwise yaw, and positive reference curvature $\kappa$ for a left turn. With positive axle cornering stiffnesses $C_f,C_r$, vehicle mass $m$, yaw inertia $I_z$, and center-of-mass distances $l_f,l_r$, the linear bicycle equations are
+\begin{align}
+ \dot e_y&=v_y+v_0e_\psi,\quad \dot e_\psi=r-v_0\kappa,\label{eq:errors}\\
+ \dot v_y&=-\frac{C_f+C_r}{mv_0}v_y
+ +\frac{C_f}{m}\delta\nonumber\\
+ &\quad +\left(\frac{l_rC_r-l_fC_f}{mv_0}-v_0\right)r,\label{eq:vy}\\
+ \dot r&=\frac{l_rC_r-l_fC_f}{I_zv_0}v_y
+ -\frac{l_f^2C_f+l_r^2C_r}{I_zv_0}r
+ +\frac{l_fC_f}{I_z}\delta.\label{eq:r}
+\end{align}
+These equations state the convention used in the manuscript; signal signs and axle/per-tire stiffness conventions must match the implementation. The nominal matrices are fixed at $v_0=60/3.6$ m/s and discretized with a zero-order hold at $T_s=0.020$ s:
+\begin{equation}
+ x_{k+1}^{\rm phys}=A_dx_k+B_d\delta_k+E_d\kappa_k.\label{eq:physical}
+\end{equation}
+Measured $V_x$ is used in the spatial reference preview and as a residual-model input. Its availability does not imply that $A_d$ is updated online. The documented baseline is therefore a fixed-matrix nominal predictor.
+\pending{Check the sign convention and insert the numerical physical parameters from the exact initialization file used for the reported runs. The recovered parameter values have not been checked against that file.}
 
 % ECUACION DE PRUEBA: descomentar y adaptar.
 % Definir x_k en R^n, u_k en R^m y w_k en R^n, con unidades por componente.
@@ -285,8 +310,9 @@ coordinate frames, sampling period, and model parameters.}
 % TONO/EXTENSION: 1--2 párrafos; enumerar solo supuestos utilizados después.
 % REVISION: ruido, retardos, saturación, variables observables y dominio
 % de validez. Justificar las cotas utilizadas con datos o referencias.
-\placeholder{Specify the operating domain, measurable quantities,
-disturbance model, actuator limits, and justified assumptions.}
+The identification domain comprises double lane changes (DLC) and tight double lane changes (DLCT) at 60 km/h, nominal friction coefficient $\mu=1$, and the CarSim C-Class hatchback configuration. Evaluation considers changes in speed, road friction, maneuver, and vehicle. These changes may affect both model representativeness and the physical attainability of the reference.
+
+The reduced model assumes small heading deviations in the kinematic error equations, positive nominal longitudinal speed, and linear tire forces. The nominal predictor contains no explicit friction-dependent tire saturation. A residual learned on the available inputs may therefore also represent omitted states and history-dependent effects; it is not an identification of a unique tire law. CarSim states provide simulation measurements. No sensor-noise, state-estimation, or actuator-delay validation is inferred from this configuration.
 
 % \begin{assumption}\label{ass:disturbance}
 %   [State a precise, testable assumption and its domain of validity.]
@@ -297,8 +323,12 @@ disturbance model, actuator limits, and justified assumptions.}
 % TONO/EXTENSION: 1--2 párrafos y formulación matemática compacta.
 % REVISION: objetivos en tensión, factibilidad y disponibilidad de referencia;
 % distinguir satisfacción de restricciones y garantías de seguridad.
-\placeholder{Formulate the control problem, tracking objectives,
-safety-related constraints, and admissible operating conditions.}
+The control objective is to track the reference while respecting steering-angle and steering-rate limits. The main research question concerns the benefit of a residual correction under a common control configuration. A valid optimization solution is distinguished from successful maneuver completion and from acceptable tracking. The baseline input constraints are
+\begin{equation}
+ |\delta_k|\leq30^\circ,\qquad
+ |\Delta\delta_k|\leq80^\circ\!/{\rm s}\,T_s=1.6^\circ.\label{eq:limits}
+\end{equation}
+All angular quantities are converted to radians in computation. Operational thresholds for tracking or other vehicle quantities, when used to label events, must be specified independently of these actuator bounds.
 
 % ======================================================================
 \section{Proposed Learning-Based Predictive Control Method}
@@ -314,8 +344,10 @@ safety-related constraints, and admissible operating conditions.}
 % TONO/EXTENSION: 1--2 párrafos y un diagrama de arquitectura.
 % REVISION: diferenciar entrenamiento, inferencia, optimización y planta;
 % señalar dónde se introduce la contribución.
-\placeholder{Describe the architecture, module interfaces, timing,
-and the location of the proposed technical contribution.}
+At each sampling instant, measured states and reference information feed the nominal predictor and the residual inference module. An externally generated nominal steering sequence supports recursive residual evaluation over the prediction horizon. The resulting correction sequence is held fixed during each quadratic-program (QP) solve. The optimizer applies only its first steering increment, and the procedure repeats after the next measurement.
+
+The proposed supervisory layer receives causal information from the learned model, the training-support detector, and past discrepancies. It estimates a specified validity or operational-risk target and informs the use of the residual or the horizon configuration. This layer is a research component awaiting a frozen policy and closed-loop validation. Offline residual training, online inference, and future supervisory intervention are separate stages.
+\pending{Document the exact source of the nominal steering sequence in the current Simulink block. Do not assume a repeated previous input or a shifted previous optimum without checking the block.}
 
 % FIGURA DE PRUEBA: descomentar el entorno completo.
 % El recuadro permite compilar sin un archivo gráfico externo.
@@ -341,8 +373,20 @@ and the location of the proposed technical contribution.}
 % CONTENIDO: qué se aprende y cómo se integra con el modelo nominal.
 % TONO/EXTENSION: 2--4 párrafos distribuidos entre los subapartados.
 % REVISION: causalidad temporal, cobertura de datos y tratamiento del error.
-\placeholder{Define the learned quantity and its interface with the
-nominal dynamics and the predictive controller.}
+All residual models use the query and target
+\begin{align}
+ z_k&=[V_{x,k},v_{y,k},r_k,\delta_k]^\top,\\
+ d_k&=x_{{\rm lat},k+1}^{\rm CarSim}
+       -x_{{\rm lat},k+1|k}^{\rm phys},\qquad
+ x_{\rm lat}=[v_y,r]^\top.\label{eq:target}
+\end{align}
+The physical one-step prediction is initialized at the measured state and uses the same effective steering and sample interval as the transition being evaluated. With
+$S=[\begin{smallmatrix}0&0\\0&0\\1&0\\0&1\end{smallmatrix}]$, the hybrid prediction is
+\begin{equation}
+ \hat x_{k+1|k}=A_dx_k+B_d\delta_k+E_d\kappa_k
+                      +S\hat d_\theta(z_k).\label{eq:hybrid}
+\end{equation}
+The targets are discrete state corrections in m/s and rad/s, not continuous-time derivatives. They are therefore injected without an additional multiplication by $T_s$. Although the direct correction affects only $v_y,r$, its influence on tracking errors propagates through subsequent prediction steps.
 
 \subsubsection{Offline Identification and Training}
 % CONTENIDO: entradas/salidas, arquitectura, pérdida, regularización,
@@ -350,46 +394,156 @@ nominal dynamics and the predictive controller.}
 % TONO/EXTENSION: 1--2 párrafos y una ecuación si aclara el aporte.
 % REVISION: particiones por trayectorias, vehículos o sesiones; prevenir
 % fuga temporal y selección de hiperparámetros con datos de prueba.
-\placeholder{Specify identification data, training procedure,
-hyperparameters, and the validation-only selection protocol.}
+The original identification set contains 3102 training, 1034 validation, and 1034 nominal test transitions, separated by complete simulation runs. Input and output normalization use training statistics only. One-step transitions are the regression targets; accumulated rollout errors and maneuver-activity labels are not additional fitting inputs. Table~\ref{tab:models} summarizes the model roles.
+\begin{table}[!t]
+\caption{Residual-model families and experimental roles}
+\label{tab:models}\centering\footnotesize
+\begin{tabularx}{\columnwidth}{@{}lXX@{}}\toprule
+ID & Mean predictor & Uncertainty role\\\midrule
+B0 & Physical bicycle; $\hat d=0$ & Reference without learned correction\\
+B1 & Deterministic MLP, two hidden layers of 64 ReLU units & Mean-only residual comparator\\
+B2 & Two independent exact GPs; ARD squared-exponential kernel & Input-dependent epistemic variance, constant noise\\
+B3 & Five heteroscedastic neural networks & Ensemble disagreement and conditional variance\\
+B4 & GP mean with input-dependent variance model & Heteroscedastic uncertainty comparator\\\bottomrule
+\end{tabularx}
+\end{table}
+
+B1 uses MATLAB \texttt{fitrnet}, with seed 42 in the recovered training record and validation-based selection between iteration budgets of 100 and 200. The selected saved configuration must be read from the trained artifact. B2 fits separate scalar models for the two residual outputs, using a constant mean basis, exact fitting and prediction, and external normalization rather than internal standardization.
+
+B3 is the principal candidate for uncertainty-based supervision. Each member estimates two means and two conditional variances. For a Gaussian conditional likelihood, the per-sample objective takes the form
+\begin{equation}
+ \mathcal L=\frac12\sum_{q\in\{v_y,r\}}
+ \left[\log(2\pi\sigma_q^2(z))+
+ \frac{(d_q-\mu_q(z))^2}{\sigma_q^2(z)}\right].\label{eq:nlltrain}
+\end{equation}
+B4 retains the B2 mean in the recovered design and adds an input-dependent variance estimate; an uncertainty improvement need not alter its mean-prediction RMSE.
+\pending{Recover the final B1 checkpoint, B2 hyperparameters, B3 optimizer, seeds and variance parameterization, and B4 variance-training and out-of-fold configuration. Reconcile the original split manifest with subsequent extraction-run identifiers before declaring a common final dataset.}
 
 \subsubsection{Online Inference and Uncertainty Handling}
 % CONTENIDO: ventana histórica, incertidumbre, actualización y latencia.
 % TONO/EXTENSION: 1--2 párrafos; precisar si el modelo permanece congelado.
 % REVISION: información disponible durante la ejecución y comportamiento
 % fuera de distribución; distinguir inferencia de aprendizaje en línea.
-\placeholder{Describe online inputs, uncertainty treatment,
-and any adaptation mechanism or frozen-model assumption.}
+Residual parameters are treated as frozen during inference; online learning is not part of the recovered baseline. For B3, let $\mu_m(z)$ and $\sigma_m^2(z)$ be a member's mean and variance for one output. The mixture moments are
+\begin{align}
+ \bar\mu(z)&=M^{-1}\sum_{m=1}^{M}\mu_m(z),\quad M=5,\\
+ U_{\rm ale}(z)&=M^{-1}\sum_m\sigma_m^2(z),\\
+ U_{\rm epi}(z)&=M^{-1}\sum_m(\mu_m(z)-\bar\mu(z))^2,\\
+ U_{\rm tot}(z)&=U_{\rm ale}(z)+U_{\rm epi}(z).\label{eq:uq}
+\end{align}
+Here $U$ denotes variance; standard deviations are its square roots. These equations define the manuscript's reporting convention and must be reconciled with exported fields. Ensemble disagreement is an epistemic proxy, and predicted conditional variance is an aleatoric proxy. With deterministic simulation and a reduced input representation, the latter can absorb unresolved dynamics and model mismatch; it is not evidence of purely physical randomness.
+
+Baseline hybrid MPC uses the residual mean. Uncertainty is assessed separately and does not automatically introduce chance constraints or robustness guarantees. Calibration is evaluated against observed prediction errors, separately for each output and condition.
 
 \subsection{Predictive Control Formulation}
 % CONTENIDO: optimización completa, horizonte y política de aplicación.
 % TONO/EXTENSION: 2--3 párrafos, ecuaciones alineadas y símbolos definidos.
 % REVISION: coherencia entre predictor, coste, restricciones y solver.
-\placeholder{Present the complete finite-horizon optimization problem
-and explain the receding-horizon implementation.}
+With the augmented state, define
+\begin{align}
+ A_a&=\begin{bmatrix}A_d&B_d\\0&1\end{bmatrix},\quad
+ B_a=\begin{bmatrix}B_d\\1\end{bmatrix},\nonumber\\
+ E_a&=\begin{bmatrix}E_d\\0\end{bmatrix},\quad
+ S_a=\begin{bmatrix}S\\0_{1\times2}\end{bmatrix}.
+\end{align}
+The predicted recursion is
+\begin{equation}
+ \hat x_{a,j+1|k}=A_a\hat x_{a,j|k}+B_a\Delta\delta_{j|k}
+           +E_a\kappa_{j|k}+S_a\bar d_{j|k},\label{eq:aug}
+\end{equation}
+initialized with $\hat x_{a,0|k}=x_{a,k}$. The sequence $\bar d_{j|k}$ is obtained by recursive rollout along the nominal steering sequence, starting from measured lateral states, and frozen for optimization. Stacking gives
+\begin{equation}
+ X=F x_{a,k}+G\Delta U+G_\kappa K+G_dD.\label{eq:stack}
+\end{equation}
+For $N_p=N_c=30$, $X\in\R^{150}$, $\Delta U\in\R^{30}$, $D\in\R^{60}$, and $G_d\in\R^{150\times60}$. Each pair in $D$ is ordered as lateral-velocity and yaw-rate correction. The finite-horizon problem minimizes the cost below subject to~\eqref{eq:aug} and~\eqref{eq:limits}. Setting $D=0$ recovers B0.
+
+The learned model is generally nonlinear in its query, but freezing $D$ makes it an additive prediction term in a QP. The residual is not re-evaluated at every candidate optimization input. This approximation and the nominal-sequence construction are therefore part of the controller definition.
 
 \subsubsection{Objective Function}
 % CONTENIDO: seguimiento, esfuerzo, término terminal y objetivos adicionales
 % pertinentes, como confort o energía; definir pesos y escalas.
 % TONO/EXTENSION: un párrafo y una ecuación compacta.
 % REVISION: justificar la sintonía sin optimizar sobre el conjunto de prueba.
-\placeholder{Define the stage and terminal costs and justify their weights.}
+A common cost representation is
+\begin{equation}
+ \min_{\Delta U}\ J_k=\sum_{j=1}^{N_p}
+ \hat x_{a,j|k}^{\top}Q_a\hat x_{a,j|k}
+ +\sum_{j=0}^{N_c-1}R_\Delta(\Delta\delta_{j|k})^2.\label{eq:cost}
+\end{equation}
+The path-relative reference is zero; the augmented steering state permits an explicit steering-effort penalty. The last recovered tuning record uses the normalization
+\begin{align}
+ Q_a&=\operatorname{diag}(4,q_\psi,1,0,q_\delta),\\
+ q_\psi&=(10\pi/180)^{-2},\quad q_\delta=(30\pi/180)^{-2},\\
+ R_\Delta&=(1.6\pi/180)^{-2}.
+\end{align}
+With states expressed in SI units, this tuning penalizes lateral displacement, heading error, lateral velocity, steering amplitude, and steering increments, with no direct yaw-rate penalty. It must be confirmed against each reported run. Weights are held common for a paired residual-model comparison. No terminal ingredient is asserted without checking the implementation.
+\pending{Verify the exact saved $Q_a,R_\Delta$, output-selection convention, and any terminal term. The normalization above is a recovered tuning record, not a newly optimized setting.}
 
 \subsubsection{Constraints and Feasibility Management}
 % CONTENIDO: límites físicos, restricciones vehiculares, holguras y terminal.
 % TONO/EXTENSION: 1--2 párrafos y restricciones explícitas.
 % REVISION: viabilidad inicial, penalización de holguras e infactibilidad;
 % evitar presentar restricciones blandas como garantías duras.
-\placeholder{Define admissible states and inputs, slack penalties,
-terminal ingredients, and the infeasibility handling policy.}
+Steering constraints are imposed on the cumulative increments,
+\begin{equation}
+ \delta_{j|k}=\delta_{k-1}+\sum_{\ell=0}^{j}\Delta\delta_{\ell|k},
+ \quad |\delta_{j|k}|\leq\delta_{\max},\quad
+ |\Delta\delta_{j|k}|\leq\Delta\delta_{\max}.
+\end{equation}
+The available records confirm angle and rate limits but do not establish additional hard state constraints or a validated slack formulation. A QP success flag indicates numerical solution status; it does not certify that CarSim follows the predicted state or completes the maneuver.
+\pending{Specify the actual solver rejection, timeout, and fallback behavior from the controller code. Do not describe the nominal model or residual removal as a certified safe fallback.}
+
+
+\subsection{Causal Validity and Risk Assessment}
+\label{sec:validity}
+Three targets are kept distinct. Accuracy validity concerns whether a prediction error exceeds an application-specific tolerance. Residual utility concerns whether the hybrid prediction is worse than the physical prediction on the same transition or input replay. Operational risk concerns an upcoming violation in the controlled plant. A single score cannot be interpreted as all three without separate validation.
+
+For standardized inputs $\tilde z$, training-support indicators include nearest-neighbor distance and regularized Mahalanobis distance:
+\begin{align}
+ s_{\rm NN}(z)&=\min_{i\in\mathcal I_{\rm train}}
+          \|\tilde z-\tilde z_i\|_2,\\
+ s_{\rm Mah}(z)&=\sqrt{(\tilde z-\bar z)^\top
+                  (\Sigma_z+\lambda I)^{-1}(\tilde z-\bar z)}.
+\end{align}
+The $K$th-neighbor distance, including the investigated $K=10$, provides an alternative support score. Training statistics, neighbor selection, and $\lambda$ are frozen before final testing. These scores quantify input-space support rather than friction or prediction error. Because training uses nearly constant speed, speed scaling and near-singular covariance directions require explicit treatment; an arbitrary near-zero standard deviation must not silently dominate the score.
+
+A causal innovation becomes available only after the corresponding transition has completed:
+\begin{equation}
+ \nu_{k-1}=x_{{\rm lat},k}^{\rm CarSim}
+   -\hat x_{{\rm lat},k|k-1}^{\rm hyb}.
+\end{equation}
+Candidate validity features combine current state/reference information, $U_{\rm epi}$, $U_{\rm ale}$, support scores, and innovations available through time $k$. The residual target $d_k$ requires $x_{k+1}$ and cannot be an online feature at time $k$.
+
+For a chosen operational admissible set $\mathcal A$, a prospective event label can be written as
+\begin{equation}
+ F_{k,H}=\mathbf 1\{\exists j\in\{1,\ldots,H\}:
+                   \eta_{k+j}\notin\mathcal A\},\label{eq:event}
+\end{equation}
+where $\eta$ contains the selected operational variables. Labels are built offline. Proposed initial values of 0.6 s anticipation ($H=30$) and 0.4 s history (20 samples) are development choices, not validated settings. Already active violations, incomplete future windows, and early termination need explicit labeling rules. A score is called a probability only after calibration has been evaluated.
+
+\pending{Choose the primary target, define $\mathcal A$ and all tolerances, freeze history/anticipation, and specify event-onset handling. No final failure detector or calibrated validity estimator is established by the available records.}
+
+\subsection{Supervisory Interface Under Investigation}
+The intended supervisory contribution is the mapping from causal indicators to a control-relevant decision. A candidate residual-use interface is
+\begin{equation}
+ \bar d_{j|k}=\alpha_{j|k}\hat d_\theta(\hat z^{\rm nom}_{j|k}),
+ \qquad 0\leq\alpha_{j|k}\leq1.
+\end{equation}
+Here $\alpha=1$ gives the always-active residual and $\alpha=0$ the physical predictor. This equation defines a possible interface, not a validated switching policy. Adapting residual depth at fixed $N_p$ differs from changing the optimization horizon.
+
+The alternative horizon study considers $N_p\in\{15,30,45\}$ with a common $N_c=15$ across its comparators. Its 30/15 baseline is a new configuration and cannot be replaced by a historical 30/30 run. One intervention branch must be selected after the prediction-depth diagnosis; the manuscript does not presume that lower validity should shorten the horizon. Policy thresholds, hysteresis and minimum dwell time must be frozen on development conditions.
+
+The evaluation addresses five hypotheses: H1, the residual adds value in part of the domain; H2, its indicators add anticipation beyond states and references; H3, the predictor retains utility in reserved conditions; H4, the procedure can be repeated with another identification dataset; and H5, supervision reduces operational violations. The present results motivate H1 and the need for H2--H5, but do not establish their confirmatory outcomes.
 
 \subsection{Implementation and Computational Complexity}
 % CONTENIDO: solver, tolerancias, inicialización, parada y acción de respaldo.
 % TONO/EXTENSION: 1--2 párrafos y pseudocódigo si elimina ambigüedades.
 % REVISION: tamaño del problema y coste por paso; diferenciar complejidad
 % asintótica y tiempos medidos en una plataforma concreta.
-\placeholder{Provide a reproducible execution procedure, solver settings,
-computational scaling, and timeout handling.}
+The execution period is 20 ms, with a nominal 30-step, 0.6 s horizon. At 60 km/h this corresponds to approximately 10 m of travel; the spatial preview must remain consistent with measured speed. The QP has 30 decision variables before any unverified auxiliary variables. Fixed nominal matrices permit offline construction of the stacked prediction operators.
+
+For a dense exact GP with $n$ training points, factorization scales cubically in $n$ and stored covariance factors scale quadratically. A posterior mean query with precomputed coefficients uses $n$ kernel evaluations, whereas direct posterior variance evaluation generally has quadratic arithmetic cost. Evaluating five neural networks scales with their parameter count; evaluating a 30-step rollout repeats those calls at each depth. These are computational scaling statements, not timing measurements.
+\pending{Insert MATLAB, Simulink and CarSim versions, CPU/RAM, solver algorithm, tolerances, warm start, and measured block timings. Include predictor, OOD detector, supervisor and QP in the timing budget.}
 
 % PSEUDOCODIGO OPCIONAL:
 %
@@ -457,8 +611,25 @@ the assumptions under which it holds.}
 % TONO/EXTENSION: 1--2 párrafos y tabla de parámetros cuando sea útil.
 % REVISION: distinguir simulación, HIL y vehículo real; definir criterios
 % de fallo y no atribuir a una modalidad evidencia obtenida en otra.
-\placeholder{Describe the platforms, scenario matrix, parameter ranges,
-execution hardware, and experimental termination criteria.}
+The available evidence is simulation-based. CarSim supplies the nonlinear vehicle plant, and Simulink implements the controller and logging. The identification vehicle is the C-Class hatchback, and the nominal speed is 60 km/h. Table~\ref{tab:configuration} records the common control configuration.
+\begin{table}[!t]
+\caption{Recovered baseline control configuration}
+\label{tab:configuration}\centering\footnotesize
+\begin{tabular}{@{}ll@{}}\toprule
+Item & Value\\\midrule
+Sample time & 0.020 s (50 Hz)\\
+Prediction/control horizons & 30/30 steps\\
+Nominal prediction duration & 0.6 s\\
+Nominal matrix speed & 60 km/h\\
+Steering angle bound & $\pm30^\circ$\\
+Steering rate bound & $\pm80^\circ$/s\\
+Increment bound & $\pm1.6^\circ$/sample\\
+Regression input dimension & 4\\
+Residual output dimension & 2\\\bottomrule
+\end{tabular}
+\end{table}
+
+The historical B0/B1 campaign contains 18 records per controller and includes nominal DLC/DLCT, changes in speed and friction, a single lane change, and a different vehicle configuration. These are heterogeneous operating conditions rather than 18 independent repetitions of the same experiment. Vehicle naming, friction-transition metadata, and observation windows require consistent auditing before aggregate comparison. No additional simulations were executed for this draft.
 
 \subsection{Data Protocol and Baseline Methods}
 % CONTENIDO: procedencia y particiones de datos, ensayos y comparadores;
@@ -466,8 +637,11 @@ execution hardware, and experimental termination criteria.}
 % TONO/EXTENSION: 2 párrafos y configuración explícita o tabla compacta.
 % REVISION: mismos datos, restricciones e información; presupuesto de
 % sintonía equitativo y documentación de código, versiones y modificaciones.
-\placeholder{Specify independent data partitions, trial counts, random
-seeds, baseline implementations, and fair tuning conditions.}
+For the original split, the training groups are DLC runs 001/004/005 and DLCT runs 001/002/004; validation uses DLC 003 and DLCT 005; nominal testing uses DLC 002 and DLCT 003. These identifiers are local to that dataset manifest. A later extraction plan uses a different run allocation; identical numeric suffixes across those manifests must not be interpreted as identical partitions.
+
+The principal comparison separates B0 from always-active residual MPC. B1 provides an existing mean-only closed-loop reference, while B2--B4 distinguish modeling and uncertainty representations. Available offline training or prediction tests do not establish a completed closed-loop campaign for every model. Final comparisons must use the same reference, initial condition, actuator limits, cost, model-information availability, and analysis window.
+
+The supervisory evaluation is prospective: fit residuals on identification data, select score architecture and policy thresholds on development conditions, then freeze both before testing reserved conditions. The historical cases already used to motivate the method are exploratory evidence. Reserved conditions must be excluded from normalization, calibration, threshold selection, and controller tuning.
 
 \subsection{Evaluation Metrics and Statistical Protocol}
 % CONTENIDO: métricas de tarea, restricciones, confort/energía si proceden,
@@ -476,8 +650,16 @@ seeds, baseline implementations, and fair tuning conditions.}
 % REVISION: tamaños de efecto y dispersión. No tratar muestras temporales
 % correladas como ensayos independientes; justificar tamaño muestral y
 % pruebas estadísticas cuando se utilicen.
-\placeholder{Define primary and secondary metrics, aggregation rules,
-independent repetitions, confidence intervals, and failure reporting.}
+For each output $q$ and prediction depth $j$, report
+\begin{equation}
+ {\rm RMSE}_q(j)=\sqrt{\frac{1}{N_j}\sum_k
+ (q_{k+j}^{\rm CarSim}-\hat q_{k+j|k})^2},
+\end{equation}
+together with MAE and maximum absolute error. Compare hybrid and physical predictions on equivalent queries. Multi-step validation uses measured input replay with the same initial state and effective steering sequence; free propagation does not reset intermediate states to measurements. A planned sequence that was never applied is not directly validated against a different realized trajectory.
+
+For uncertainty, report Gaussian negative log-likelihood, empirical interval coverage and width, separately by output and condition. A nominal 95\% Gaussian interval is $\bar\mu\pm1.96\sqrt{U_{\rm tot}}$ when that approximation is used; its nominal level does not establish empirical coverage.
+
+Control metrics include RMSE and maximum $|e_y|,|e_\psi|$, steering RMS and total variation, commanded/effective constraint violations, solver rejections, and maneuver completion. Completion requires checking final station and termination, rather than inferring it from available samples. Timing summaries include median, 95th and 99th percentiles, maximum, and the fraction exceeding 20 ms. Runs and scenarios are the comparison units; adjacent time samples or overlapping windows are not independent replications.
 
 % TABLA PROFESIONAL DE PRUEBA:
 % Descomentar el entorno completo y sustituir -- por resultados medidos.
@@ -520,24 +702,48 @@ independent repetitions, confidence intervals, and failure reporting.}
 % TONO/EXTENSION: 1--2 párrafos y una figura/tabla si hay aporte de modelado.
 % REVISION: comparar con el modelo nominal y un predictor alternativo fuerte;
 % comprobar si una mejor predicción produce una mejora de control.
-\placeholder{Report held-out prediction performance and relate modeling
-errors to the downstream control task.}
+The recovered implementation checks establish consistency of residual injection for the tested logs. A B1 temporal-semantics check found a maximum difference of $1.6653\times10^{-16}$ between $G_dD$ and direct recursive injection. A subsequent B2 diagnostic in the retrieved history reported agreement between manual GP means and MATLAB prediction to approximately $10^{-12}$--$10^{-13}$, with rollout reconstruction error of order $10^{-17}$. These are numerical implementation checks for particular records, not physical prediction-accuracy or control-performance results.
+
+The available exploratory summary reports one-step improvements for B1 in 14 of 18 conditions for lateral velocity and 15 of 18 for yaw rate, compared with lateral tracking improvement in only 6 conditions. Because the historical comparison has pairing and window issues, these counts are descriptive and must be re-exported from the audited run table before publication.
+\pending{Insert the common held-out B0--B4 prediction table, per-depth rollout curves, and uncertainty calibration by condition. Verify the final B2 implementation version; its earlier constant-mean diagnostic must not be conflated with the later equivalence check.}
 
 \subsection{Closed-Loop Performance and Constraint Satisfaction}
 % CONTENIDO: métricas principales, restricciones, fallos y condiciones difíciles.
 % TONO/EXTENSION: 2--3 párrafos, tabla agregada y trayectorias representativas.
 % REVISION: magnitud y variabilidad de las mejoras, costes asociados y
 % resultados desfavorables; evitar seleccionar únicamente casos favorables.
-\placeholder{Compare the methods across the full scenario matrix,
-including performance, constraint violations, and unsuccessful trials.}
+Table~\ref{tab:preliminary} reproduces selected lateral tracking errors from the recovered B0/B1 campaign. The relative change is recomputed as $100({\rm RMSE}_{B0}-{\rm RMSE}_{B1})/{\rm RMSE}_{B0}$, so a positive value denotes improvement. The table is preliminary and does not replace a fully audited paired export.
+\begin{table}[!t]
+\caption{Preliminary historical lateral tracking RMSE (m)}
+\label{tab:preliminary}\centering\footnotesize
+\begin{tabular}{@{}lrrr@{}}\toprule
+Condition & B0 & B1 & Change (\%)\\\midrule
+DLC60, $\mu=1$ & 0.043522 & 0.058320 & $-34.0$\\
+DLCT60, $\mu=1$ & 0.234242 & 0.190787 & $+18.6$\\
+DLC50, $\mu=1$ & 0.076509 & 0.917251 & $-1098.9$\\
+DLCT50, $\mu=1$ & 0.128737 & 0.922855 & $-616.9$\\
+DLC60, $\mu=0.3$ & 0.874925 & 0.855801 & $+2.2$\\
+DLCT60, $\mu=0.3$ & 1.916585 & 1.787264 & $+6.7$\\
+DLCT60, $\mu=0.6$ & 1.320701 & 1.340069 & $-1.5$\\
+DLCT60, $\mu=0.8$ & 0.650923 & 0.655430 & $-0.7$\\\bottomrule
+\end{tabular}
+\par\smallskip
+\parbox{\columnwidth}{\footnotesize Speed is encoded in each condition name in km/h. These are individual historical condition records, without confidence intervals or a claim of statistical superiority.}
+\end{table}
+
+At the nominal speed, B1 improves the tight maneuver but worsens the standard double lane change. At 50 km/h, its lateral error is approximately 12.0 times the B0 value for DLC and 7.2 times for DLCT. Under low friction, the correction provides modest improvements in the selected records while substantial tracking error remains. These differences show that a single always-active residual is not uniformly beneficial in the recovered campaign. They do not isolate the causal mechanism of degradation.
+
+The campaign summary reports 100\% valid QP solutions for both controllers, while maneuver completion was recorded as not checked. Thus numerical optimization success coexists with marked tracking degradation. Neither maneuver completion nor acceptable constraint behavior on the effective plant can be inferred solely from that success rate.
+\pending{Complete paired state/input trajectories, full condition coverage, effective steering violations, completion checks and uncertainty summaries from the original result files. Exclude mismatched windows from aggregate improvement counts.}
 
 \subsection{Ablation and Sensitivity Analysis}
 % CONTENIDO: retirar mecanismos nuevos y variar hiperparámetros críticos.
 % TONO/EXTENSION: 1--2 párrafos y tabla/gráfica centrada en aislar efectos.
 % REVISION: contribución individual de cada componente y control de recursos;
 % no confundir un mejor algoritmo con un mayor presupuesto computacional.
-\placeholder{Isolate the contributions of the proposed components and
-report sensitivity to the parameters that affect deployment.}
+The planned validity ablation compares a constant decision, epistemic uncertainty alone, OOD distance alone, combined epistemic/aleatoric/OOD information, and that combination augmented with past innovation. A state-and-reference comparator is required to test whether learned-model indicators add information beyond the maneuver state. Model capacity and threshold-selection data must be kept comparable.
+Prediction-depth analysis evaluates at least $j=1,5,10,20,30$ when enough samples remain. This distinguishes immediate residual failure from loss of benefit under propagation. A validity horizon computed using future ground truth is an offline target, not an online input. The policy experiment must distinguish changing $N_p$ from changing the depth of residual use.
+\pending{Insert executed ablation results and the selected policy. Sensitivities and comparisons in this subsection are evaluation plans, not observed findings.}
 
 \subsection{Real-Time Performance and Experimental Validation}
 % CONTENIDO: latencia completa, hardware, distribución de tiempos,
@@ -545,8 +751,8 @@ report sensitivity to the parameters that affect deployment.}
 % TONO/EXTENSION: 1--2 párrafos con condiciones y medidas completas.
 % REVISION: media, percentiles altos y máximo observado frente al muestreo;
 % diferenciar un máximo observado y una cota demostrada de peor caso.
-\placeholder{Report implementation timing, missed deadlines, and the
-available hardware-in-the-loop or real-vehicle validation.}
+The nominal sampling interval establishes a 20 ms execution budget, but the available records do not establish an end-to-end timing distribution. GP variance evaluation, nearest-neighbor searches, and repeated horizon inference may add costs that are absent from a mean-only controller. Simulation at a 50 Hz controller sample time is insufficient evidence of real-time execution.
+\pending{Report full online latency and missed deadlines on identified hardware. No hardware-in-the-loop or real-vehicle validation is currently documented for this manuscript.}
 
 \subsection{Limitations and Generalization}
 % CONTENIDO: fallos, supuestos restrictivos y transferencia a otros vehículos,
@@ -554,8 +760,11 @@ available hardware-in-the-loop or real-vehicle validation.}
 % TONO/EXTENSION: 1--2 párrafos analíticos y específicos.
 % REVISION: conclusiones proporcionales a la evidencia; distinguir resultados
 % comprobados, hipótesis de transferencia y cuestiones todavía abiertas.
-\placeholder{Discuss the observed limitations, unresolved failure modes,
-generalization evidence, and practical deployment implications.}
+The current evidence is limited to simulation and exploratory historical comparisons. The physical matrices remain fixed at a nominal speed, the residual is trained on a restricted operating domain, and the reduced query omits several states of the nonlinear plant. Failure outside that domain cannot be attributed uniquely to a single uncertainty component or to distance from training data.
+
+The historical result summaries contain known naming and metadata inconsistencies, including SUV scenario-name order and a transition encoded numerically as $\mu=1.06$ although described as $1\rightarrow0.6$. One speed-change comparison also has unequal time windows. These cases require audit rather than manual adjustment of their metrics. The final generalization analysis must preserve unfavorable conditions, use independently reserved scenarios, and separate accuracy, residual utility and closed-loop operational outcomes.
+
+No recursive feasibility, closed-loop stability, or collision-avoidance guarantee follows from the learned variance, the QP success rate, or a switch to the nominal model. A supervisor may suppress a useful correction or retain a harmful one; its value must be measured against fixed policies under the same information and control budget.
 
 % ======================================================================
 \section{Conclusion}
@@ -565,8 +774,8 @@ generalization evidence, and practical deployment implications.}
 % TONO/EXTENSION: 1--2 párrafos; aproximadamente 5% del cuerpo.
 % REVISION: responder a los aportes iniciales sin incorporar experimentos,
 % cifras o afirmaciones nuevas ni ampliar injustificadamente el alcance.
-\placeholder{Summarize the verified contribution, the most informative
-measured findings, the supported scope, and a concrete next research step.}
+
+% Reescribir resumen y conclusion tras cerrar la evaluacion confirmatoria.
 
 % ======================================================================
 \ifIncludeAppendix
@@ -591,7 +800,7 @@ from the main text.}
 % TVT solicita reconocer el uso de IA para modificar texto de los autores
 % cuando se haya utilizado; describir herramienta y alcance reales.
 % Esta plantilla contiene estructura y marcadores, no resultados científicos.
-\placeholder{Insert verified acknowledgments and any applicable disclosure.}
+\pending{Confirm all authors, affiliations, funding identifiers, acknowledgments and any required disclosure before submission.}
 
 \ifIncludeDeclarations
 \section*{Conflict of Interest}
@@ -625,14 +834,19 @@ and instructions, including any access restrictions.}
 % 3. Compilar: pdfLaTeX, BibTeX, pdfLaTeX, pdfLaTeX.
 
 \begin{thebibliography}{00}
+\bibitem{hewingReview2020}
+L.~Hewing, K.~P. Wabersich, M.~Menner, and M.~N. Zeilinger,
+``Learning-based model predictive control: Toward safe learning in control,''
+\emph{Annu. Rev. Control Robot. Auton. Syst.}, vol.~3, pp.~269--296, 2020,
+doi: \href{https://doi.org/10.1146/annurev-control-090419-075625}{10.1146/annurev-control-090419-075625}.
 
-\bibitem{liDataDrivenHierarchicalModel2025}
-Y.~Li, Z.~Chen, T.~Wang, X.~Zeng, and Z.~Yin,
-``Data-driven hierarchical model predictive control for automated
-overtaking maneuver via Gaussian process regression,''
-\emph{IEEE Trans. Veh. Technol.}, vol.~74, no.~1,
-pp.~263--278, Jan. 2025, doi:
-\href{https://doi.org/10.1109/TVT.2024.3453170}{10.1109/TVT.2024.3453170}.
+\bibitem{hewingCautious2019}
+L.~Hewing, J.~Kabzan, and M.~N. Zeilinger,
+``Cautious model predictive control using Gaussian process regression,''
+arXiv:1705.10702, revised 2019.
+% Referencia de autor verificada; sustituir por metadatos finales de revista.
+% DOI de la publicacion: 10.1109/TCST.2019.2949757.
+\url{https://arxiv.org/abs/1705.10702}.
 
 \bibitem{chenExperimentalEvaluationTrajectory2026a}
 G.~Chen, X.~Zhao, Z.~Gao, Z.~Gao, X.~Wang, and M.~Hua,
@@ -642,32 +856,59 @@ predictive control enhanced by physics-informed neural network,''
 pp.~8928--8939, Jun. 2026, doi:
 \href{https://doi.org/10.1109/TVT.2025.3635878}{10.1109/TVT.2025.3635878}.
 
-\bibitem{baeLearningExpertLevelRacing2025}
-J.~Bae, J.~Lim, B.~Suh, J.~Lee, K.~Ryu, J.~Kim, and J.~Choi,
-``Learning expert-level racing strategies via scheduled cost functions
-in model predictive control,''
-\emph{IEEE Trans. Intell. Veh.}, vol.~10, no.~6,
-pp.~3827--3840, Jun. 2025, doi:
-\href{https://doi.org/10.1109/TIV.2024.3465598}{10.1109/TIV.2024.3465598}.
 
-\bibitem{zhengAdaptiveModelPredictive2026}
-Z.~Zheng, S.~Wang, X.~Zhao, Q.~Yu, H.~Zhang, Y.~Lv, and J.~Tian,
-``Adaptive model predictive control of four-wheel drive intelligent
-electric vehicles based on stability probability under extreme
-braking conditions,''
-\emph{IEEE Trans. Intell. Veh.}, vol.~11, no.~5,
-pp.~618--628, May 2026, doi:
-\href{https://doi.org/10.1109/TIV.2024.3398129}{10.1109/TIV.2024.3398129}.
-
-\bibitem{yangDataDrivenModelPredictive2025}
-H.~Yang, Y.~He, C.~Mu, and P.~Li,
-``Data-driven model predictive longitudinal control for autonomous
-vehicles with unknown chassis,''
-\emph{IEEE Trans. Veh. Technol.}, vol.~74, no.~8,
-pp.~11732--11742, Aug. 2025, doi:
-\href{https://doi.org/10.1109/TVT.2025.3552933}{10.1109/TVT.2025.3552933}.
-
+\bibitem{lakshminarayanan2017}
+B.~Lakshminarayanan, A.~Pritzel, and C.~Blundell,
+``Simple and scalable predictive uncertainty estimation using deep ensembles,''
+in \emph{Advances in Neural Information Processing Systems}, vol.~30, 2017.
+\url{https://arxiv.org/abs/1612.01474}.
 \end{thebibliography}
+
+% ENTRADAS ORIGINALES DE LA PLANTILLA: conservadas para revision de pertinencia.
+% \begin{thebibliography}{00}
+% 
+% \bibitem{liDataDrivenHierarchicalModel2025}
+% Y.~Li, Z.~Chen, T.~Wang, X.~Zeng, and Z.~Yin,
+% ``Data-driven hierarchical model predictive control for automated
+% overtaking maneuver via Gaussian process regression,''
+% \emph{IEEE Trans. Veh. Technol.}, vol.~74, no.~1,
+% pp.~263--278, Jan. 2025, doi:
+% \href{https://doi.org/10.1109/TVT.2024.3453170}{10.1109/TVT.2024.3453170}.
+% 
+% \bibitem{chenExperimentalEvaluationTrajectory2026a}
+% G.~Chen, X.~Zhao, Z.~Gao, Z.~Gao, X.~Wang, and M.~Hua,
+% ``Experimental evaluation of trajectory tracking with nonlinear model
+% predictive control enhanced by physics-informed neural network,''
+% \emph{IEEE Trans. Veh. Technol.}, vol.~75, no.~6,
+% pp.~8928--8939, Jun. 2026, doi:
+% \href{https://doi.org/10.1109/TVT.2025.3635878}{10.1109/TVT.2025.3635878}.
+% 
+% \bibitem{baeLearningExpertLevelRacing2025}
+% J.~Bae, J.~Lim, B.~Suh, J.~Lee, K.~Ryu, J.~Kim, and J.~Choi,
+% ``Learning expert-level racing strategies via scheduled cost functions
+% in model predictive control,''
+% \emph{IEEE Trans. Intell. Veh.}, vol.~10, no.~6,
+% pp.~3827--3840, Jun. 2025, doi:
+% \href{https://doi.org/10.1109/TIV.2024.3465598}{10.1109/TIV.2024.3465598}.
+% 
+% \bibitem{zhengAdaptiveModelPredictive2026}
+% Z.~Zheng, S.~Wang, X.~Zhao, Q.~Yu, H.~Zhang, Y.~Lv, and J.~Tian,
+% ``Adaptive model predictive control of four-wheel drive intelligent
+% electric vehicles based on stability probability under extreme
+% braking conditions,''
+% \emph{IEEE Trans. Intell. Veh.}, vol.~11, no.~5,
+% pp.~618--628, May 2026, doi:
+% \href{https://doi.org/10.1109/TIV.2024.3398129}{10.1109/TIV.2024.3398129}.
+% 
+% \bibitem{yangDataDrivenModelPredictive2025}
+% H.~Yang, Y.~He, C.~Mu, and P.~Li,
+% ``Data-driven model predictive longitudinal control for autonomous
+% vehicles with unknown chassis,''
+% \emph{IEEE Trans. Veh. Technol.}, vol.~74, no.~8,
+% pp.~11732--11742, Aug. 2025, doi:
+% \href{https://doi.org/10.1109/TVT.2025.3552933}{10.1109/TVT.2025.3552933}.
+% 
+% \end{thebibliography}
 
 % ======================================================================
 \ifIncludeBiographies
